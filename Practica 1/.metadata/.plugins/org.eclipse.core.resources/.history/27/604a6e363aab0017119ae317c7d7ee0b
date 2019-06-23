@@ -1,0 +1,241 @@
+//DNI 20084606 Rubio Martinez, Ruben
+public class PLoc {
+	private String continente;
+	private String pais;
+	private String ciudad;
+	private Coordenada latitud; //coordenadas latitud en grados
+	private Coordenada longitud; //coordenadas longitud en grados
+	private double[] gps;  //coordenadas gps(decimales)
+	
+	//constructor inicializando todo a nulos
+	public PLoc(){
+		continente = null;
+		pais = null;
+		ciudad = null;
+		Coordenada latitud = null;
+		Coordenada longitud = null;
+		gps = new double[2];
+	}
+	
+	
+	//constructor inicializando las variables pasando valores por parametro
+	public PLoc(String c, String p, String l){
+		continente = c;
+		pais = p;
+		ciudad = l;
+		Coordenada latitud = null;
+		Coordenada longitud = null;
+		gps = new double[2];
+	}
+	
+
+	/*
+	 * Para asignar una Coordenada a la latitud hemos creado una clase CoordenadaExcepcion que
+	 * tratara los rangos invalidos a la hora de asignarlo mediante el lanzamiento de excepciones
+	 */
+	public void setLatitud(Coordenada p) throws CoordenadaExcepcion{
+	
+		//comprobamos que los grados esten en su rango (0-90)
+		if(p.getGrados()<=90 && p.getGrados()>=0){
+			//comprobamos que los minutos esten en su rango (0-59)
+			if(p.getMinutos()<=59 && p.getMinutos()>=0){
+				//comprobamos que la letra sea N o S
+				if(p.getPos()=='N' || p.getPos()=='S'){
+						latitud = new Coordenada(p.getGrados(),p.getMinutos(),p.getPos());
+						formarGps(p);
+				}else{
+					String frase = "Latitud posicion "+p.getPos();
+					throw new CoordenadaExcepcion(frase);
+				}
+			}else{
+				String frase = "Latitud minutos "+p.getMinutos();
+				throw new CoordenadaExcepcion(frase);
+			}		
+		}else{
+			String frase = "Latitud grados "+p.getGrados();
+			throw new CoordenadaExcepcion(frase);
+		}
+		
+	}
+	
+	
+	//done - nunca se pasara un nulo aqui
+	public void setLongitud(Coordenada p) throws CoordenadaExcepcion{
+		
+		//comprobamos que los grados esten en su rango (0-180)
+		if(p.getGrados()<=180 && p.getGrados()>=0){
+			//comprobamos que los minutos esten en su rango (0-59)
+			if(p.getMinutos()<=59 && p.getMinutos()>=0){
+				//comprobamos que la letra sea E o O
+				if(p.getPos()=='E' || p.getPos()=='O'){
+						longitud = new Coordenada(p.getGrados(),p.getMinutos(),p.getPos());
+						formarGps(p);
+				}else{
+					String frase = "Longitud posicion "+p.getPos();
+					throw new CoordenadaExcepcion(frase);
+				}
+			}else{
+				String frase = "Longitud minutos "+p.getMinutos();
+				throw new CoordenadaExcepcion(frase);
+			}		
+		}else{
+			String frase = "Longitud grados "+p.getGrados();
+			throw new CoordenadaExcepcion(frase);
+		}
+	}
+	
+	
+	//NEW aplica la formula para transformar las coordenadas a valores del gps
+	public void formarGps(Coordenada p){
+		System.out.println("entra");
+		double valor = 0;
+		//es latitud
+		if(p.getPos()=='S' || p.getPos()=='N'){
+			valor = p.getGrados()+(p.getMinutos()/60.0);
+			//es negativo
+			if(p.getPos()=='S'){
+				valor = -valor;
+			}
+			gps[0] = valor;
+		}
+		
+		//es longitud
+		if(p.getPos()=='E' || p.getPos()=='O'){
+			valor = p.getGrados()+(p.getMinutos()/60.0);
+			//es negativo
+			if(p.getPos()=='O'){
+				valor = -valor;
+			}
+			gps[1] = valor;
+		}
+
+		
+		
+	}
+	
+	
+	//NEW realiza el redondeo del gps para mostrar por pantalla solo 2 valores decimales
+	public double redondeo(double redondeo){
+		
+		redondeo = redondeo*100;
+		redondeo = (int) redondeo;
+		redondeo = (double) redondeo/100;
+
+		return redondeo;
+		
+	}
+	
+	
+	
+	public void escribeInfoGrados(){
+		
+		String mostrar = null;
+		
+		if(continente==null){
+			mostrar = "x - ";
+		}else{
+			mostrar = continente + " - ";
+		}
+		
+		if(pais==null){
+			mostrar = mostrar + "x - ";
+		}else{
+			mostrar = mostrar + pais + " - ";
+		}
+		
+		if(ciudad==null){
+			mostrar = mostrar + "x - ";
+		}else{
+			mostrar = mostrar + ciudad + " - ";
+		}
+		
+		mostrar = mostrar + latitud.getGrados() + " " + latitud.getMinutos() + " " + latitud.getPos() + " - ";
+		mostrar = mostrar + longitud.getGrados() + " " + longitud.getMinutos() + " " + longitud.getPos();
+		System.out.println(mostrar);
+	}
+	
+	
+	/*
+	 * Se forma un String con los datos del PLoc para mostrarlo por pantalla. 
+	 * He usado mi propio metodo llamado "redondeo" para redondear a 2 decimales las coordenadas
+	 * del gps
+	 */
+	public void escribeInfoGps(){
+		
+		String mostrar = null;
+		
+		if(continente==null){
+			mostrar = "x - ";
+		}else{
+			mostrar = continente + " - ";
+		}
+		
+		if(pais==null){
+			mostrar = mostrar + "x - ";
+		}else{
+			mostrar = mostrar + pais + " - ";
+		}
+		
+		if(ciudad==null){
+			mostrar = mostrar + "x - ";
+		}else{
+			mostrar = mostrar + ciudad + " - ";
+		}
+		
+		mostrar = mostrar + redondeo(gps[0]) + " - ";
+		mostrar = mostrar + redondeo(gps[1]);
+		System.out.println(mostrar);
+		
+	}
+	
+	
+	public String getContinente(){
+		return continente;
+	}
+	
+	public String getPais(){
+		return pais;
+	}
+	
+	public String getCiudad(){
+		return ciudad;
+	}
+	
+	public Coordenada getLatitud(){
+		return latitud;
+	}
+	
+	public Coordenada getLongitud(){
+		return longitud;
+	}
+	
+	public double[] getGps(){
+		return gps;
+	}
+	
+	
+	//NEW compara los PLocs
+	public boolean iguales(PLoc p){
+		boolean devolucion=false;
+		
+		if(p.getCiudad()!=null && p.getCiudad().equalsIgnoreCase(this.getCiudad())){
+			if(p.getContinente()!=null && p.getContinente().equalsIgnoreCase(this.getContinente())){
+				if((p.getGps()[0] == this.getGps()[0]) && (p.getGps()[1] == this.getGps()[1])){
+					if(p.getContinente()!=null && p.getLatitud().iguales(this.getLatitud())){
+						if(p.getLongitud().iguales(this.getLongitud())){
+							devolucion=true;
+						}
+					}
+				}
+			}
+		}
+		
+		return devolucion;
+	}
+	
+	//NEW asigna una string al continte de la clase
+	public void setContinente(String c){
+		continente=c;
+	}
+	
+}

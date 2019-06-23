@@ -1,0 +1,35 @@
+import java.io.*;
+
+public class compilador {
+
+	public static void main(String[] args) {
+		Coordenada latitud = new Coordenada(69,41,'N');
+		Coordenada longitud = new Coordenada(70,11,'O');
+		Coordenada latitud2 = new Coordenada(34,47,'S');
+		Coordenada longitud2 = new Coordenada(68,11,'O');
+		PLoc p1 = new PLoc ("America",null,"Buenos Aires");
+		PLoc p2 = new PLoc ("Europa","Spain","Alicante");
+		Atlas a = new Atlas();
+		
+		try {
+			p1.setLatitud(latitud);
+			p1.setLongitud(longitud);
+			p2.setLatitud(latitud2);
+			p2.setLongitud(longitud2);
+		} catch (CoordenadaExcepcion e) {
+			// TODO: handle exception
+		}
+		
+		double distancia;
+		
+		double[] gps1 = new double[2];
+		gps1 = p1.getGps();
+		
+		double[] gps2 = new double[2];
+		gps2 = p2.getGps();
+		
+
+		distancia = Math.sqrt(Math.pow(2-4, 2)+Math.pow(4-8, 2))
+	}
+
+}
